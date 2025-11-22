@@ -1,0 +1,132 @@
+<div class="bg-white p-8 rounded-xl shadow-md max-w-4xl mx-auto">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">New Invoice</h1>
+    <p class="text-gray-500">Invoice No: <span class="font-semibold">{{ invoiceNumber }}</span></p>
+  </div>
+  
+  <form [formGroup]="invoiceForm" novalidate>
+    <!-- Customer Details -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div>
+        <label for="customerName" class="block text-sm font-medium text-gray-700">Customer Name</label>
+        <input id="customerName" type="text" formControlName="customerName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="vehicle" class="block text-sm font-medium text-gray-700">Vehicle</label>
+        <input id="vehicle" type="text" formControlName="vehicle" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="vehicleNo" class="block text-sm font-medium text-gray-700">Vehicle No</label>
+        <input id="vehicleNo" type="text" formControlName="vehicleNo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="mobileNo" class="block text-sm font-medium text-gray-700">Mobile No</label>
+        <input id="mobileNo" type="text" formControlName="mobileNo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="km" class="block text-sm font-medium text-gray-700">K.M</label>
+        <input id="km" type="text" formControlName="km" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+        <input id="date" type="date" formControlName="date" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+      </div>
+    </div>
+
+    <!-- Items -->
+    <h2 class="text-xl font-bold text-gray-800 mb-4 border-t pt-6">Items</h2>
+    <div formArrayName="items" class="space-y-4">
+      @for(item of items.controls; track $index) {
+        <div [formGroupName]="$index" class="grid grid-cols-12 gap-4 items-center p-3 bg-gray-50 rounded-md">
+          <div class="col-span-12 md:col-span-5">
+            <label class="text-xs text-gray-600">Description of Goods</label>
+            <input type="text" list="inventory-items" formControlName="description" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+            <datalist id="inventory-items">
+              @for (invItem of inventory(); track invItem.id) {
+                <option [value]="invItem.name"></option>
+              }
+            </datalist>
+          </div>
+          <div class="col-span-4 md:col-span-2">
+            <label class="text-xs text-gray-600">Qty</label>
+            <input type="number" formControlName="quantity" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          </div>
+          <div class="col-span-4 md:col-span-2">
+            <label class="text-xs text-gray-600">Rate</label>
+            <input type="number" formControlName="rate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          </div>
+          <div class="col-span-4 md:col-span-2">
+            <label class="text-xs text-gray-600">Amount</label>
+            <input type="number" formControlName="amount" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100 sm:text-sm">
+          </div>
+          <div class="col-span-12 md:col-span-1 flex justify-end items-end pt-5">
+            <button type="button" (click)="removeItem($index)" class="text-red-500 hover:text-red-700">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <button type="button" (click)="addItem()" class="mt-4 text-sm font-medium text-blue-600 hover:text-blue-800">+ Add Item</button>
+    
+    <!-- Invoice Status -->
+    <div class="mt-8 border-t pt-6">
+      <h3 class="text-lg font-medium text-gray-800">Invoice Status</h3>
+      <div class="mt-2 flex items-center space-x-6">
+        <label class="flex items-center">
+          <input type="radio" formControlName="status" value="Paid" class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500">
+          <span class="ml-2 text-sm text-gray-900">Paid</span>
+        </label>
+        <label class="flex items-center">
+          <input type="radio" formControlName="status" value="Unpaid" class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500">
+          <span class="ml-2 text-sm text-gray-900">Unpaid</span>
+        </label>
+      </div>
+    </div>
+
+
+    <!-- Total -->
+    <div class="mt-8 flex justify-end">
+      <div class="w-full max-w-sm">
+        <div class="grid grid-cols-2 gap-x-4 gap-y-2 mb-4">
+          <label for="taxPercent" class="font-medium text-gray-700 self-center">Tax (%)</label>
+          <input id="taxPercent" type="number" formControlName="taxPercent" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm text-right">
+
+          <label for="discountAmount" class="font-medium text-gray-700 self-center">Discount</label>
+          <input id="discountAmount" type="number" formControlName="discountAmount" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm text-right">
+        </div>
+
+        <div class="border-t pt-3 space-y-2 text-gray-800">
+          <div class="flex justify-between items-center">
+            <span class="font-medium">Subtotal</span>
+            <span>{{ subTotal() | currency:'INR':'symbol-narrow':'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="font-medium">Tax</span>
+            <span>+ {{ taxAmount() | currency:'INR':'symbol-narrow':'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <span class="font-medium">Discount</span>
+            <span>- {{ invoiceForm.get('discountAmount')?.value | currency:'INR':'symbol-narrow':'1.2-2' }}</span>
+          </div>
+          <div class="flex justify-between items-center text-xl font-bold border-t pt-2 mt-2">
+            <span>Grand Total</span>
+            <span>{{ grandTotal() | currency:'INR':'symbol-narrow':'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Actions -->
+    <div class="mt-10 pt-6 border-t flex justify-end space-x-4">
+      <button type="button" (click)="generateAndSaveInvoice()" [disabled]="invoiceForm.invalid" class="px-8 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed">
+        Save Invoice
+      </button>
+      <button type="button" (click)="generateAndPrintInvoice()" [disabled]="invoiceForm.invalid" class="px-8 py-3 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed">
+        Save & Print
+      </button>
+    </div>
+  </form>
+</div>

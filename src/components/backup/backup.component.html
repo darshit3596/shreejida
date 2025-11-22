@@ -1,0 +1,51 @@
+<div class="bg-white p-8 rounded-xl shadow-md max-w-4xl mx-auto">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Data Management</h1>
+    <p class="text-gray-500">Manage your application's database file.</p>
+  </div>
+  
+  <div class="space-y-8">
+    
+    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+        <h3 class="font-semibold text-blue-800">Current Database File</h3>
+        @if(fileName()) {
+            <p class="text-blue-700 font-mono mt-1">{{ fileName() }}</p>
+        } @else {
+            <p class="text-blue-700 italic mt-1">No file is currently open.</p>
+        }
+    </div>
+
+    <div>
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Actions</h2>
+        <div class="space-y-4">
+            <div class="p-4 border rounded-lg">
+                <h3 class="font-semibold text-gray-700">Open or Create a Database</h3>
+                <p class="text-sm text-gray-500 mt-1 mb-3">
+                    You can switch to a different database file or start fresh with a new one.
+                </p>
+                <div class="flex items-center space-x-4 flex-wrap gap-y-2">
+                    <button (click)="openDatabase()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700">
+                        Open Database...
+                    </button>
+                    <button (click)="createNewDatabase()" class="px-6 py-2 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700">
+                        Create New Database...
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4 border rounded-lg">
+                <h3 class="font-semibold text-gray-700">Save a Copy</h3>
+                <p class="text-sm text-gray-500 mt-1 mb-3">
+                    Save a backup copy of the current database to a different file. This is useful for creating backups.
+                </p>
+                <button (click)="saveAs()" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700">
+                    Save a Copy As...
+                </button>
+            </div>
+        </div>
+        <p class="text-sm text-yellow-700 mt-6 bg-yellow-100 p-3 rounded-md">
+          <strong>Warning:</strong> Opening or creating a new database will close the current session. Please save any unsaved changes before proceeding.
+        </p>
+    </div>
+  </div>
+</div>

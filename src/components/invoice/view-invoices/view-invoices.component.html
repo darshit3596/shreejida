@@ -1,0 +1,86 @@
+<div class="bg-white p-8 rounded-xl shadow-md">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">View Invoices</h1>
+
+  <div class="mb-6">
+    <input 
+      type="text" 
+      placeholder="Search by customer name or invoice no..." 
+      [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)"
+      class="w-full max-w-md border border-gray-300 rounded-md shadow-sm py-2 px-4 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead>
+        <tr class="bg-gray-50 text-gray-600 uppercase text-sm">
+          <th class="py-3 px-4 font-semibold">Invoice #</th>
+          <th class="py-3 px-4 font-semibold">Customer Name</th>
+          <th class="py-3 px-4 font-semibold">Date</th>
+          <th class="py-3 px-4 font-semibold">Status</th>
+          <th class="py-3 px-4 font-semibold">Total</th>
+          <th class="py-3 px-4 font-semibold text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-700">
+        @for(invoice of filteredInvoices(); track invoice.id) {
+        <tr class="border-b border-gray-200 hover:bg-gray-50">
+          <td class="py-3 px-4 font-medium">{{ invoice.id }}</td>
+          <td class="py-3 px-4">{{ invoice.customerName }}</td>
+          <td class="py-3 px-4">{{ invoice.date | date:'dd-MM-yyyy' }}</td>
+          <td class="py-3 px-4">
+             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                  [class.bg-green-100]="invoice.status === 'Paid'" [class.text-green-800]="invoice.status === 'Paid'"
+                  [class.bg-yellow-100]="invoice.status === 'Unpaid'" [class.text-yellow-800]="invoice.status === 'Unpaid'">
+              {{ invoice.status }}
+            </span>
+          </td>
+          <td class="py-3 px-4 font-semibold">{{ invoice.total | currency:'INR':'symbol-narrow':'1.2-2' }}</td>
+          <td class="py-3 px-4 text-right">
+            <a [routerLink]="['/print-invoice', invoice.id]" class="text-blue-600 hover:underline font-medium">View/Print</a>
+            <button (click)="shareOnWhatsApp(invoice)" class="text-green-600 hover:underline font-medium ml-4">Share</button>
+            <button (click)="toggleInvoiceStatus(invoice)" 
+              class="font-medium hover:underline ml-4"
+              [class.text-yellow-600]="invoice.status === 'Paid'"
+              [class.text-green-600]="invoice.status === 'Unpaid'">
+                @if(invoice.status === 'Paid') { Mark as Unpaid } @else { Mark as Paid }
+            </button>
+            <button (click)="openDeleteModal(invoice)" class="text-red-600 hover:underline font-medium ml-4">Delete</button>
+          </td>
+        </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center py-8 text-gray-500">No invoices found.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+@if(showDeleteModal() && invoiceToDelete()) {
+  @let invoice = invoiceToDelete()!;
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-md p-8">
+      <h2 class="text-2xl font-bold text-red-600 mb-4">Delete Invoice</h2>
+      <p class="text-gray-700 mb-6">
+        This action is irreversible. To confirm, please type the invoice number <strong class="font-mono">{{ invoice.id }}</strong> in the box below.
+      </p>
+      <div>
+        <label for="deleteConfirm" class="block text-sm font-medium text-gray-700">Invoice Number</label>
+        <input 
+          id="deleteConfirm" 
+          type="text" 
+          [ngModel]="deleteConfirmationInput()"
+          (ngModelChange)="deleteConfirmationInput.set($event)"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm font-mono">
+      </div>
+      <div class="mt-8 flex justify-end space-x-4">
+        <button type="button" (click)="closeDeleteModal()" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">Cancel</button>
+        <button type="button" (click)="confirmDelete()" [disabled]="!isDeleteConfirmed()" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 disabled:bg-red-300">Delete</button>
+      </div>
+    </div>
+  </div>
+}

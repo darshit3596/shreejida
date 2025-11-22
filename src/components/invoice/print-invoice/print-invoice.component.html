@@ -1,0 +1,112 @@
+<div class="print-container bg-white p-4 font-serif">
+  <div class="print-controls no-print p-4 bg-gray-100 border-b text-center">
+    <button (click)="print()" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700">Print Invoice</button>
+    <a routerLink="/view-invoices" class="ml-4 px-6 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700">Back to Invoices</a>
+  </div>
+
+  @if (invoice(); as inv) {
+    @let currentSettings = settings();
+    <div class="page p-8">
+      <header class="text-center mb-4">
+        <h1 class="text-4xl font-bold" style="font-family: 'Times New Roman', serif; border-bottom: 3px double black; display: inline-block; padding-bottom: 2px;">{{ currentSettings.shopName }}</h1>
+        <p class="font-semibold text-lg">{{ currentSettings.tagLine }}</p>
+        <p class="text-sm">{{ currentSettings.address }}</p>
+      </header>
+
+      <div class="border-y-2 border-black my-2 py-1 text-center">
+        <h2 class="text-xl font-bold">Sales Invoice</h2>
+      </div>
+
+      <div class="grid grid-cols-2 text-sm mb-2">
+        <div class="space-y-1">
+          <p><span class="font-semibold w-24 inline-block">Name</span>: {{ inv.customerName }}</p>
+          <p><span class="font-semibold w-24 inline-block">Vehicle</span>: {{ inv.vehicle }}</p>
+          <p><span class="font-semibold w-24 inline-block">Vehicle No</span>: {{ inv.vehicleNo }}</p>
+          <p><span class="font-semibold w-24 inline-block">Mobile No</span>: {{ inv.mobileNo }}</p>
+        </div>
+        <div class="space-y-1 text-right">
+          <p><span class="font-semibold">K.M : </span> {{ inv.km }}</p>
+          <p><span class="font-semibold">Invoice No : </span> {{ inv.id }}</p>
+          <p><span class="font-semibold">Date : </span> {{ inv.date | date:'dd-MM-yyyy' }}</p>
+        </div>
+      </div>
+      
+      <table class="w-full border-2 border-black text-sm">
+        <thead>
+          <tr class="border-b-2 border-black">
+            <th class="w-12 border-r border-black p-1 font-bold">No.</th>
+            <th class="border-r border-black p-1 font-bold">Description Of Goods</th>
+            <th class="w-20 border-r border-black p-1 font-bold">Qty.</th>
+            <th class="w-28 border-r border-black p-1 font-bold">Rate</th>
+            <th class="w-32 p-1 font-bold">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(item of inv.items; track $index) {
+            <tr class="align-top">
+              <td class="border-r border-black p-1 text-center">{{ $index + 1 }}</td>
+              <td class="border-r border-black p-1">{{ item.description }}</td>
+              <td class="border-r border-black p-1 text-right">{{ item.quantity }}</td>
+              <td class="border-r border-black p-1 text-right">{{ item.rate | number:'1.2-2' }}</td>
+              <td class="p-1 text-right">{{ item.amount | number:'1.2-2' }}</td>
+            </tr>
+          }
+          <!-- Fill empty rows -->
+          @for (i of [1,2,3,4,5,6,7,8]; track i) {
+            @if($index >= inv.items.length) {
+              <tr class="h-6">
+                <td class="border-r border-black p-1 text-center">{{ $index + 1 }}</td>
+                <td class="border-r border-black p-1"></td>
+                <td class="border-r border-black p-1"></td>
+                <td class="border-r border-black p-1"></td>
+                <td class="p-1"></td>
+              </tr>
+            }
+          }
+        </tbody>
+        <tfoot>
+          <tr class="border-t-2 border-black">
+            <td colspan="4" class="p-1 text-right font-semibold border-r border-black">Subtotal</td>
+            <td class="p-1 text-right font-semibold">{{ inv.subTotal | number:'1.2-2' }}</td>
+          </tr>
+          <tr class="border-t border-black">
+            <td colspan="4" class="p-1 text-right font-semibold border-r border-black">Tax ({{ inv.taxPercent }}%)</td>
+            <td class="p-1 text-right font-semibold">{{ (inv.subTotal * inv.taxPercent / 100) | number:'1.2-2' }}</td>
+          </tr>
+          <tr class="border-t border-black">
+            <td colspan="4" class="p-1 text-right font-semibold border-r border-black">Discount</td>
+            <td class="p-1 text-right font-semibold">- {{ inv.discountAmount | number:'1.2-2' }}</td>
+          </tr>
+          <tr class="border-t-2 border-black bg-gray-50">
+            <td colspan="4" class="p-1 text-right font-bold border-r border-black">Total</td>
+            <td class="p-1 text-right font-bold">{{ inv.total | number:'1.2-2' }}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="mt-2 text-sm">
+        <span class="font-semibold">Amount in Words:</span>
+        <span class="italic">{{ amountInWords() }} Rupees Only</span>
+      </div>
+
+      <div class="grid grid-cols-2 mt-2 text-xs">
+        <div class="space-y-1">
+          @if (currentSettings.term1) { <p>{{ currentSettings.term1 }}</p> }
+          @if (currentSettings.term2) { <p>{{ currentSettings.term2 }}</p> }
+          @if (currentSettings.term3) { <p>{{ currentSettings.term3 }}</p> }
+        </div>
+        <div class="text-right flex flex-col justify-end items-end">
+          <p class="font-bold">For, {{ currentSettings.signatory }}</p>
+          <p class="mt-12">(Authorised Signatory)</p>
+        </div>
+      </div>
+
+      <footer class="text-center text-xs border-t-2 border-black mt-4 pt-1">
+        <p>Thank you ! Visit Again</p>
+        <p class="text-xxs">© 2025-2026 Darshit Sapariya Solutions. All rights reserved.</p>
+      </footer>
+    </div>
+  } @else {
+    <p class="text-center p-8">Invoice not found.</p>
+  }
+</div>

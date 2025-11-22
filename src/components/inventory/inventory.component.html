@@ -1,0 +1,88 @@
+
+<div class="bg-white p-8 rounded-xl shadow-md">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Inventory</h1>
+    <button (click)="openAddModal()" class="px-6 py-2 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75">
+      Add New Item
+    </button>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead>
+        <tr class="bg-gray-50 text-gray-600 uppercase text-sm">
+          <th class="py-3 px-4 font-semibold">Item Name</th>
+          <th class="py-3 px-4 font-semibold">Quantity</th>
+          <th class="py-3 px-4 font-semibold">Price</th>
+          <th class="py-3 px-4 font-semibold">Min Stock</th>
+          <th class="py-3 px-4 font-semibold text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-700">
+        @for(item of inventory(); track item.id) {
+        <tr class="border-b border-gray-200 hover:bg-gray-50">
+          <td class="py-3 px-4">{{ item.name }}</td>
+          <td class="py-3 px-4">
+            @if(item.quantity === -1) {
+              <span class="text-gray-500 italic">Infinite</span>
+            } @else {
+              <span [class.text-red-600]="item.quantity <= item.minStock" [class.font-bold]="item.quantity <= item.minStock">{{ item.quantity }}</span>
+            }
+          </td>
+          <td class="py-3 px-4">{{ item.price | currency:'INR':'symbol-narrow':'1.2-2' }}</td>
+          <td class="py-3 px-4">{{ item.minStock > 0 ? item.minStock : 'N/A' }}</td>
+          <td class="py-3 px-4 text-right">
+            <button (click)="openEditModal(item)" class="text-blue-600 hover:underline font-medium">Edit</button>
+            <button (click)="deleteItem(item.id)" class="text-red-600 hover:underline font-medium ml-4">Delete</button>
+          </td>
+        </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="text-center py-8 text-gray-500">No items in inventory. Add one to get started.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add/Edit Item Modal -->
+@if(showModal()) {
+<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+  <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg p-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">{{ isEditMode() ? 'Edit Item' : 'Add New Item' }}</h2>
+    <form [formGroup]="inventoryForm" (ngSubmit)="saveItem()">
+      <div class="space-y-4">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700">Item Name</label>
+          <input id="name" type="text" formControlName="name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+        </div>
+        <div class="flex items-center space-x-8">
+          <div class="flex-1">
+            <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+            <input id="quantity" type="number" formControlName="quantity" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm disabled:bg-gray-100">
+          </div>
+          <div class="pt-6">
+            <input id="isInfinite" type="checkbox" formControlName="isInfinite" class="h-4 w-4 text-gray-600 border-gray-300 rounded focus:ring-gray-500">
+            <label for="isInfinite" class="ml-2 text-sm text-gray-900">Infinite</label>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+            <input id="price" type="number" formControlName="price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          </div>
+          <div>
+            <label for="minStock" class="block text-sm font-medium text-gray-700">Min Stock</label>
+            <input id="minStock" type="number" formControlName="minStock" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 flex justify-end space-x-4">
+        <button type="button" (click)="closeModal()" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">Cancel</button>
+        <button type="submit" [disabled]="inventoryForm.invalid" class="px-6 py-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 disabled:bg-gray-400">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+}

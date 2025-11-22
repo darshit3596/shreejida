@@ -1,0 +1,5 @@
+{
+  "name": "SJ_Application",
+  "description": "A comprehensive desktop application for managing invoices and inventory. Generate, print, and track invoices while automatically updating stock levels. Includes a dashboard for insights and data backup/restore functionality.",
+  "requestFramePermissions": []
+}

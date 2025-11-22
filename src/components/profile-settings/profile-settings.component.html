@@ -1,0 +1,84 @@
+<div class="bg-white p-8 rounded-xl shadow-md max-w-4xl mx-auto relative">
+  <!-- Success Toast -->
+  @if (showSuccessMessage()) {
+    <div class="fixed top-8 right-8 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+      Settings saved successfully!
+    </div>
+  }
+
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Profile Settings</h1>
+    <p class="text-gray-500">Manage your shop details that appear on the invoice.</p>
+  </div>
+
+  <form [formGroup]="settingsForm" (ngSubmit)="promptForPassword()">
+    <div class="space-y-6">
+      <div class="space-y-4">
+        <div>
+          <label for="shopName" class="block text-sm font-medium text-gray-700">Shop Name / Website Title</label>
+          <input id="shopName" type="text" formControlName="shopName" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          <p class="mt-2 text-xs text-gray-500">This name appears on printed invoices and in the top navigation bar.</p>
+        </div>
+        <div>
+          <label for="tagLine" class="block text-sm font-medium text-gray-700">Tag Line</label>
+          <input id="tagLine" type="text" formControlName="tagLine" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+        </div>
+        <div>
+          <label for="address" class="block text-sm font-medium text-gray-700">Address & Contact</label>
+          <input id="address" type="text" formControlName="address" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+        </div>
+        <div>
+          <label for="signatory" class="block text-sm font-medium text-gray-700">Signatory Name (for invoice)</label>
+          <input id="signatory" type="text" formControlName="signatory" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+        </div>
+      </div>
+
+      <div class="border-t pt-6">
+        <h2 class="text-lg font-medium text-gray-900">Invoice Terms & Conditions</h2>
+        <p class="mt-1 text-sm text-gray-500">These will appear at the bottom of the printed invoice.</p>
+        <div class="mt-4 space-y-4">
+          <div>
+            <label for="term1" class="block text-sm font-medium text-gray-700">Term 1</label>
+            <input id="term1" type="text" formControlName="term1" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          </div>
+          <div>
+            <label for="term2" class="block text-sm font-medium text-gray-700">Term 2</label>
+            <input id="term2" type="text" formControlName="term2" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          </div>
+          <div>
+            <label for="term3" class="block text-sm font-medium text-gray-700">Term 3</label>
+            <input id="term3" type="text" formControlName="term3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 text-right">
+      <button type="submit" [disabled]="settingsForm.invalid" class="px-6 py-2 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 disabled:bg-gray-400">
+        Save Settings
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Password Confirmation Modal -->
+@if(showPasswordModal()) {
+<div class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+  <div class="bg-white rounded-lg shadow-2xl w-full max-w-md p-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Confirm Changes</h2>
+    <p class="text-gray-600 mb-6">For your security, please enter your password to save the changes.</p>
+    <form [formGroup]="passwordForm" (ngSubmit)="confirmAndSaveSettings()">
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input id="password" type="password" formControlName="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+      </div>
+      @if (passwordError()) {
+        <p class="mt-2 text-sm text-red-600">{{ passwordError() }}</p>
+      }
+      <div class="mt-8 flex justify-end space-x-4">
+        <button type="button" (click)="cancelSave()" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">Cancel</button>
+        <button type="submit" [disabled]="passwordForm.invalid" class="px-6 py-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 disabled:bg-gray-400">Confirm & Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+}

@@ -1,0 +1,81 @@
+
+@media print {
+  /* Hide everything on the page that is not part of the print container */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make the print container and all its children visible */
+  .print-container, .print-container * {
+    visibility: visible;
+  }
+
+  /* Position the print container to take up the whole page */
+  .print-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Add a border around the entire printable area for a professional look */
+  .page {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 1px solid #000 !important;
+    box-shadow: none;
+    page-break-after: always;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: #fff !important;
+  }
+
+  /* Explicitly set border styles to ensure they are not overridden by browser print stylesheets */
+  table, th, td {
+    border-collapse: collapse;
+    border-color: #000 !important;
+  }
+
+  .border-black { border-color: #000 !important; }
+  .border-2 { border-width: 2px !important; }
+  .border-b-2 { border-bottom-width: 2px !important; }
+  .border-t-2 { border-top-width: 2px !important; }
+  .border-r { border-right-width: 1px !important; }
+  
+  /* Ensure background colors are printed */
+  .bg-gray-50 {
+    background-color: #f9fafb !important;
+  }
+}
+
+/* Page setup for A4 paper with margins */
+@page {
+  size: A4;
+  margin: 1cm;
+}
+
+.text-xxs {
+    font-size: 0.65rem;
+    line-height: 0.85rem;
+}
+
+/* Default border collapse for screen view */
+table, th, td {
+  border-collapse: collapse;
+}
+
+/* This rule ensures the body of the table has a bottom border before the footer */
+tbody tr:last-child {
+  border-bottom: 2px solid black;
+}

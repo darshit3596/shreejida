@@ -1,0 +1,125 @@
+
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+    <p class="text-gray-500">{{ today | date:'fullDate' }}</p>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
+      <div class="bg-green-100 p-3 rounded-full">
+        <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" />
+        </svg>
+      </div>
+      <div>
+        <p class="text-gray-500 text-sm font-medium">Today's Sales</p>
+        <p class="text-2xl font-bold text-gray-800">{{ todayStats().sales | currency:'INR':'symbol-narrow':'1.2-2' }}</p>
+      </div>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
+      <div class="bg-blue-100 p-3 rounded-full">
+        <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </div>
+      <div>
+        <p class="text-gray-500 text-sm font-medium">Invoices Today</p>
+        <p class="text-2xl font-bold text-gray-800">{{ todayStats().invoiceCount }}</p>
+      </div>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
+      <div class="bg-yellow-100 p-3 rounded-full">
+        <svg class="h-8 w-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <div>
+        <p class="text-gray-500 text-sm font-medium">Low Stock Items</p>
+        <p class="text-2xl font-bold text-gray-800">{{ lowStockItems().length }}</p>
+      </div>
+    </div>
+     <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
+      <div class="bg-red-100 p-3 rounded-full">
+        <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" />
+        </svg>
+      </div>
+      <div>
+        <p class="text-gray-500 text-sm font-medium">Total Unpaid</p>
+        <p class="text-2xl font-bold text-gray-800">{{ totalUnpaidAmount() | currency:'INR':'symbol-narrow':'1.2-2' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Low Stock Alerts -->
+  <div class="bg-white p-6 rounded-xl shadow-md">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Low Stock Alerts</h2>
+    @if(lowStockItems().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="bg-gray-50 text-gray-600 uppercase text-sm">
+              <th class="py-3 px-4 font-semibold">Item Name</th>
+              <th class="py-3 px-4 font-semibold">Quantity Left</th>
+              <th class="py-3 px-4 font-semibold">Min Stock</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700">
+            @for(item of lowStockItems(); track item.id) {
+            <tr class="border-b border-gray-200 hover:bg-gray-50">
+              <td class="py-3 px-4">{{ item.name }}</td>
+              <td class="py-3 px-4"><span class="font-bold text-red-600">{{ item.quantity }}</span></td>
+              <td class="py-3 px-4">{{ item.minStock }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="text-center py-8">
+        <p class="text-gray-500">All items are well-stocked. Great job!</p>
+      </div>
+    }
+  </div>
+  
+    <!-- Unpaid Invoices -->
+  <div class="bg-white p-6 rounded-xl shadow-md">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Unpaid Invoices</h2>
+    @if(unpaidInvoices().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="bg-gray-50 text-gray-600 uppercase text-sm">
+              <th class="py-3 px-4 font-semibold">Invoice #</th>
+              <th class="py-3 px-4 font-semibold">Customer Name</th>
+              <th class="py-3 px-4 font-semibold">Amount Due</th>
+              <th class="py-3 px-4 font-semibold text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700">
+            @for(invoice of unpaidInvoices(); track invoice.id) {
+            <tr class="border-b border-gray-200 hover:bg-gray-50">
+              <td class="py-3 px-4 font-medium">{{ invoice.id }}</td>
+              <td class="py-3 px-4">{{ invoice.customerName }}</td>
+              <td class="py-3 px-4 font-semibold">{{ invoice.total | currency:'INR':'symbol-narrow':'1.2-2' }}</td>
+              <td class="py-3 px-4 text-right">
+                <button (click)="sendPaymentReminder(invoice)" 
+                        class="px-3 py-1 bg-green-500 text-white text-xs font-semibold rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
+                  Send Reminder
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="text-center py-8">
+        <p class="text-gray-500">All invoices are paid. Excellent!</p>
+      </div>
+    }
+  </div>
+
+</div>

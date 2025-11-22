@@ -1,0 +1,98 @@
+
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-800">Sales Reports</h1>
+    <p class="text-gray-500">Analyze your sales performance over different periods.</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white p-6 rounded-xl shadow-md">
+    <form [formGroup]="reportForm" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+      <div>
+        <label for="reportType" class="block text-sm font-medium text-gray-700">Report Type</label>
+        <select id="reportType" formControlName="reportType" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+          <option value="daily">Daily</option>
+          <option value="monthly">This Month</option>
+          <option value="yearly">This Year</option>
+          <option value="custom">Custom Range</option>
+        </select>
+      </div>
+      @if (reportForm.get('reportType')?.value === 'custom') {
+        <div>
+          <label for="customStartDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+          <input id="customStartDate" type="date" formControlName="customStartDate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+        </div>
+        <div>
+          <label for="customEndDate" class="block text-sm font-medium text-gray-700">End Date</label>
+          <input id="customEndDate" type="date" formControlName="customEndDate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm">
+        </div>
+      }
+    </form>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <p class="text-gray-500 text-sm font-medium">Total Sales</p>
+      <p class="text-2xl font-bold text-gray-800">{{ reportSummary().totalSales | currency:'INR':'symbol-narrow':'1.2-2' }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <p class="text-gray-500 text-sm font-medium">Total Invoices</p>
+      <p class="text-2xl font-bold text-gray-800">{{ reportSummary().invoiceCount }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <p class="text-gray-500 text-sm font-medium">Total Tax</p>
+      <p class="text-2xl font-bold text-gray-800">{{ reportSummary().totalTax | currency:'INR':'symbol-narrow':'1.2-2' }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <p class="text-gray-500 text-sm font-medium">Total Discount</p>
+      <p class="text-2xl font-bold text-gray-800">{{ reportSummary().totalDiscount | currency:'INR':'symbol-narrow':'1.2-2' }}</p>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="bg-white p-6 rounded-xl shadow-md">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-gray-800">Invoice Details</h2>
+      <button (click)="downloadReport()" 
+              [disabled]="filteredInvoices().length === 0"
+              class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 disabled:bg-gray-400 disabled:cursor-not-allowed">
+        Download Report
+      </button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="bg-gray-50 text-gray-600 uppercase text-sm">
+            <th class="py-3 px-4 font-semibold">Invoice #</th>
+            <th class="py-3 px-4 font-semibold">Customer Name</th>
+            <th class="py-3 px-4 font-semibold">Date</th>
+            <th class="py-3 px-4 font-semibold">Status</th>
+            <th class="py-3 px-4 font-semibold text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-700">
+          @for (invoice of filteredInvoices(); track invoice.id) {
+            <tr class="border-b border-gray-200 hover:bg-gray-50">
+              <td class="py-3 px-4 font-medium">{{ invoice.id }}</td>
+              <td class="py-3 px-4">{{ invoice.customerName }}</td>
+              <td class="py-3 px-4">{{ invoice.date | date:'dd-MM-yyyy' }}</td>
+              <td class="py-3 px-4">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                      [class.bg-green-100]="invoice.status === 'Paid'" [class.text-green-800]="invoice.status === 'Paid'"
+                      [class.bg-yellow-100]="invoice.status === 'Unpaid'" [class.text-yellow-800]="invoice.status === 'Unpaid'">
+                  {{ invoice.status }}
+                </span>
+              </td>
+              <td class="py-3 px-4 font-semibold text-right">{{ invoice.total | currency:'INR':'symbol-narrow':'1.2-2' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-8 text-gray-500">No invoices found for the selected period.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
